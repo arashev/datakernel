@@ -8,9 +8,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import addContactDialogStyles from "./addContactDialogStyles";
-import {getInstance} from "global-apps-common";
+import {getInstance, useSnackbar} from "global-apps-common";
 import ContactsService from "../../modules/contacts/ContactsService";
-import {withSnackbar} from "notistack";
 import {withRouter} from "react-router-dom";
 
 function AddContactDialogView({classes, onClose, name, loading, onSubmit, onNameChange}) {
@@ -63,9 +62,10 @@ function AddContactDialogView({classes, onClose, name, loading, onSubmit, onName
   );
 }
 
-function AddContactDialog({classes, enqueueSnackbar, contactPublicKey, onClose}) {
+function AddContactDialog({classes, contactPublicKey, onClose}) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const {showSnackbar, hideSnackbar} = useSnackbar();
   const contactsService = getInstance(ContactsService);
 
   const props = {
@@ -80,15 +80,15 @@ function AddContactDialog({classes, enqueueSnackbar, contactPublicKey, onClose})
 
     onSubmit(event) {
       event.preventDefault();
+      showSnackbar('Adding...', 'loading');
       setLoading(true);
       return contactsService.addContact(contactPublicKey, name)
         .then(() => {
+          hideSnackbar();
           onClose();
         })
         .catch(err => {
-          enqueueSnackbar(err.message, {
-            variant: 'error'
-          });
+          showSnackbar(err.message, 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -99,7 +99,5 @@ function AddContactDialog({classes, enqueueSnackbar, contactPublicKey, onClose})
 }
 
 export default withRouter(
-  withSnackbar(
-    withStyles(addContactDialogStyles)(AddContactDialog)
-  )
+  withStyles(addContactDialogStyles)(AddContactDialog)
 );

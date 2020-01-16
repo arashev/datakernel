@@ -8,9 +8,8 @@ import dialogStyles from './dialogStyles';
 
 function Dialog({children, onClose, loading, classes, ...otherProps}) {
   return (
-    <MUDialog {...otherProps} open={true} onClose={onClose}>
+    <MUDialog {...otherProps} open={true}>
       <IconButton
-        aria-label="Close"
         className={classes.closeButton}
         onClick={onClose}
       >

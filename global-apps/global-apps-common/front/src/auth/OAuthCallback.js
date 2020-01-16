@@ -5,7 +5,7 @@ import {withRouter} from 'react-router-dom';
 import {AuthContext} from "./AuthContext";
 import AfterAuthRedirect from "./AfterAuthRedirect";
 
-function OAuthCallback({location, authByPrivateKey}) {
+function OAuthCallbackComponent({location, authByPrivateKey}) {
   const params = qs.parse(location.search);
 
   useEffect(() => {
@@ -17,12 +17,14 @@ function OAuthCallback({location, authByPrivateKey}) {
   return <AfterAuthRedirect/>;
 }
 
-export default connectService(
+const OAuthCallback = connectService(
   AuthContext, (state, accountService) => ({
     authByPrivateKey(privateKey) {
       accountService.authByPrivateKey(privateKey);
     }
   })
 )(
-  withRouter(OAuthCallback)
+  withRouter(OAuthCallbackComponent)
 );
+
+export {OAuthCallback};

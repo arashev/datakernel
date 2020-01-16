@@ -1,21 +1,19 @@
 import React, {useEffect} from 'react';
-import {withSnackbar} from 'notistack';
 import Grid from '@material-ui/core/Grid';
 import DebugNotesList from '../DebugNotesList/DebugNotesList';
 import NotesService from '../../modules/notes/NotesService';
-import {checkAuth, RegisterDependency} from 'global-apps-common';
+import {checkAuth, RegisterDependency, useSnackbar} from 'global-apps-common';
 import CommitsGraph from '../CommitsGraph/CommitsGraph';
 
-function DebugScreen({match, enqueueSnackbar}) {
+function DebugScreen({match}) {
   const notesService = NotesService.create();
   const {noteId} = match.params;
+  const {showSnackbar} = useSnackbar();
 
   useEffect(() => {
     notesService.init()
       .catch(err => {
-        enqueueSnackbar(err.message, {
-          variant: 'error'
-        });
+        showSnackbar(err.message, 'error');
       });
 
     return () => {
@@ -37,4 +35,4 @@ function DebugScreen({match, enqueueSnackbar}) {
   );
 }
 
-export default checkAuth(withSnackbar(DebugScreen));
+export default checkAuth(DebugScreen);

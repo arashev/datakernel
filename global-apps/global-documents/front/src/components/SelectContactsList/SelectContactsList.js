@@ -1,6 +1,5 @@
 import React from "react";
 import {withStyles} from '@material-ui/core';
-import {withSnackbar} from "notistack";
 import List from "@material-ui/core/List";
 import selectContactsListStyles from "./selectContactsListStyles";
 import ContactItem from "../ContactItem/ContactItem";
@@ -20,11 +19,13 @@ function SelectContactsListView({
                                   searchContacts,
                                   publicKey
                                 }) {
+
+  if (search === '' && filteredContacts.length === 0) {
+    return <EmptySelectScreen/>;
+  }
+
   return (
-    <div className={classes.chatsList}>
-      {search === '' && filteredContacts.length === 0 && (
-        <EmptySelectScreen/>
-      )}
+    <div className={`${classes.chatsList} scroller`}>
       <List subheader={<li/>}>
         {filteredContacts.length > 0 && (
           <li>
@@ -32,14 +33,14 @@ function SelectContactsListView({
               <ListSubheader className={classes.listSubheader}>Friends</ListSubheader>
               {filteredContacts
                 .map(([publicKey]) =>
-                <ContactItem
-                  selected={participants.has(publicKey)}
-                  onClick={onContactToggle.bind(this, publicKey)}
-                  primaryName={names.get(publicKey)}
-                  showDeleteButton={true}
-                  onRemoveContact={onRemoveContact.bind(this, publicKey)}
-                />
-              )}
+                  <ContactItem
+                    selected={participants.has(publicKey)}
+                    onClick={onContactToggle.bind(this, publicKey)}
+                    primaryName={names.get(publicKey)}
+                    showDeleteButton={true}
+                    onRemoveContact={onRemoveContact.bind(this, publicKey)}
+                  />
+                )}
             </List>
           </li>
         )}
@@ -109,4 +110,4 @@ function SelectContactsList({
   return <SelectContactsListView {...props}/>;
 }
 
-export default withSnackbar(withStyles(selectContactsListStyles)(SelectContactsList));
+export default withStyles(selectContactsListStyles)(SelectContactsList);

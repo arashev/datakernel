@@ -9,10 +9,7 @@ const noteEditorStyles = theme => ({
     height: '100%',
     resize: 'none',
     borderStyle: 'none',
-    overflowY: 'hidden',
-    '&:hover': {
-      overflowY: 'overlay'
-    }
+    overflow: 'auto'
   },
   paper: {
     flexGrow: 1,
@@ -20,6 +17,9 @@ const noteEditorStyles = theme => ({
     marginTop: theme.spacing(11),
     padding: theme.spacing(3),
     paddingRight: theme.spacing(2)
+  },
+  circularProgress: {
+    margin: 'auto'
   }
 });
 

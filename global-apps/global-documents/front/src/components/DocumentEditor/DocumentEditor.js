@@ -1,16 +1,28 @@
 import React, {useEffect} from 'react';
 import {Paper, withStyles} from '@material-ui/core';
 import {getDifference} from './utils';
-import editorStyles from "./editorStyles";
+import documentEditorStyles from "./documentEditorStyles";
 import {getInstance, useService} from "global-apps-common";
 import DocumentService from "../../modules/document/DocumentService";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-function DocumentEditorView({classes, onContentChange, content}) {
+function DocumentEditorView({classes, onContentChange, content, ready}) {
   let textInput = React.createRef();
 
   useEffect(() => {
-    textInput.focus();
-  }, [textInput]);
+    if (ready) {
+      textInput.focus();
+    }
+  }, [ready]);
+
+  if (!ready) {
+    return (
+      <CircularProgress
+        size={36}
+        className={classes.circularProgress}
+      />
+    )
+  }
 
   return (
     <Paper className={classes.paper}>
@@ -26,11 +38,12 @@ function DocumentEditorView({classes, onContentChange, content}) {
 
 function DocumentEditor({classes, onInsert, onDelete, onReplace}) {
   const documentService = getInstance(DocumentService);
-  const {content} = useService(documentService);
+  const {content, ready} = useService(documentService);
 
   const props = {
     classes,
     content,
+    ready,
 
     onContentChange(event) {
       const difference = getDifference(content, event.target.value, event.target.selectionEnd);
@@ -57,4 +70,4 @@ function DocumentEditor({classes, onInsert, onDelete, onReplace}) {
   return <DocumentEditorView {...props}/>
 }
 
-export default withStyles(editorStyles)(DocumentEditor);
+export default withStyles(documentEditorStyles)(DocumentEditor);

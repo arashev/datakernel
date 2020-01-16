@@ -1,17 +1,15 @@
 import React, {useMemo} from 'react';
 import DocumentService from "../../modules/document/DocumentService";
 import DocumentEditor from "../DocumentEditor/DocumentEditor";
-import {withSnackbar} from "notistack";
-import {RegisterDependency, initService} from "global-apps-common";
+import {RegisterDependency, initService, useSnackbar} from "global-apps-common";
 
-function Document({documentId, isNew, enqueueSnackbar}) {
+function Document({documentId, isNew}) {
+  const {showSnackbar} = useSnackbar();
   const documentService = useMemo(() => (
     DocumentService.createFrom(documentId, isNew)
-  ), [documentId]);
+  ), [documentId, isNew]);
 
-  initService(documentService, err => enqueueSnackbar(err.message, {
-    variant: 'error'
-  }));
+  initService(documentService, err => showSnackbar(err.message,  'error'));
 
   const onInsert = (position, content) => {
     documentService.insert(position, content);
@@ -25,19 +23,15 @@ function Document({documentId, isNew, enqueueSnackbar}) {
     documentService.replace(position, oldContent, newContent);
   };
 
-  const onRename = newName => {
-    documentService.rename(newName);
-  };
-
-    return (
-      <RegisterDependency name={DocumentService} value={documentService}>
-          <DocumentEditor
-            onInsert={onInsert}
-            onDelete={onDelete}
-            onReplace={onReplace}
-          />
-      </RegisterDependency>
-    );
+  return (
+    <RegisterDependency name={DocumentService} value={documentService}>
+      <DocumentEditor
+        onInsert={onInsert}
+        onDelete={onDelete}
+        onReplace={onReplace}
+      />
+    </RegisterDependency>
+  );
 }
 
-export default withSnackbar(Document);
+export default Document;
